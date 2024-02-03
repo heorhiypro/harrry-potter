@@ -5,19 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
-
-    public static String cleanText(String url) throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get(url)));
-        content = content.replaceAll("[^A-Za-z ]"," ").toLowerCase(Locale.ROOT);
-        return content;
-    }
 
     public static void main(String[] args) throws IOException {
 
@@ -27,43 +18,28 @@ public class Main {
         content = content.replaceAll("[^A-Za-z ]"," ").toLowerCase(Locale.ROOT);
 
         String[] words = content.split(" +"); // 400 000
+        List<String> list = new ArrayList<>(
+                Arrays.asList(words)
+        );
+        List<Word> wordsList = new ArrayList<>();
+        List<String> unique = list.stream()
+                        .distinct()
+                                .collect(Collectors.toList());
+        unique.stream()
+                        .forEach(word -> {
+                            int freq = (int) list.stream()
+                                    .filter(item -> item.equals(word))
+                                    .count();
+                            wordsList.add(new Word(word, freq));
+                           }
+                        );
 
-        Arrays.sort(words);
-
-        String distinctString = " ";
-
-        for (int i = 0; i < words.length ; i++) {
-            if (!distinctString.contains(words[i])){
-                distinctString+= words[i] + " ";
-            }
-        }
-
-        String[] distincts = distinctString.split(" ");
-        int[] freq = new int[distincts.length];
-
-        for (int i = 0; i < distincts.length ; i++) {
-            int count = 0;
-            for (int j = 0; j < words.length ; j++) {
-                if (distincts[i].equals(words[j])) {
-                    count++;
-                }
-            }
-            freq[i] = count;
-        }
-
-        for (int i = 0; i < distincts.length ; i++) { // 5 000
-            distincts[i] += " " + freq[i];
-        }
-
-        Arrays.sort(distincts, Comparator.comparing(str
-                -> Integer.valueOf(str.replaceAll("[^0-9]", ""))));
-
-        for (int i = 0; i < 30; i++) {
-            System.out.println(distincts[distincts.length - 1 - i]);
-        }
-
+        List<Word> result = wordsList.stream()
+                        .sorted(Comparator.comparingInt(Word::getFreq).reversed())
+                        .collect(Collectors.toList());
+        result.stream().limit(10)
+                        .forEach(System.out::println);
         System.out.println("------");
-
-
+        System.out.println(ChronoUnit.MILLIS.between(LocalDateTime.now(), start));
     }
 }
