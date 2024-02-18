@@ -15,9 +15,9 @@ public class Main {
         LocalDateTime start = LocalDateTime.now();
         String content = new String(Files.readAllBytes(Paths.get("src/edu/pro/txt/harry.txt")));
 
-        content = content.replaceAll("[^A-Za-z ]"," ").toLowerCase(Locale.ROOT);
+        String contentCleaned = content.replaceAll("[^A-Za-z ]"," ").toLowerCase(Locale.ROOT);
 
-        String[] words = content.split(" +"); // 400 000
+        String[] words = contentCleaned.split(" +");
         List<String> list = new ArrayList<>(
                 Arrays.asList(words)
         );
