@@ -22,9 +22,7 @@ public class Main {
                 Arrays.asList(words)
         );
         List<Word> wordsList = new ArrayList<>();
-        List<String> unique = list.stream()
-                        .distinct()
-                                .collect(Collectors.toList());
+        List<String> unique = list.stream().distinct().collect(Collectors.toList());
         unique.stream()
                         .forEach(word -> {
                             int freq = (int) list.stream()
